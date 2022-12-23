@@ -1,12 +1,36 @@
+#!/usr/bin/env perl
+#
+##
+# Compiler wrapper  
+#
+# Copyright @ 2022 Ben <ben@tacago.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with the code.  If not, see <http://www.gnu.org/licenses/>.
+#
+our $USAGE = "-pkg <pkgs> -o <output.exe> file.ml";
+
+
+
 use strict;
 use warnings;
 use Data::Dumper   qw(Dumper);
-use File::Basename qw(fileparse dirname);
+use File::Basename qw(fileparse dirname basename);
 use Getopt::Long   qw(GetOptions);
 use File::Spec     qw(catfile);
 use Cwd            qw(cwd getcwd abs_path);
 
-our $USAGE = "Usage: $0 -pkg <pkgs> -o <output.exe> file.ml \n";
+sub usage { die "usage: " . basename($0) . " $USAGE\n"; }
 
 my %Lib_exts = (
    ocamlc   => '.cma',
@@ -19,9 +43,12 @@ GetOptions(
    'pkg=s'   => \$packages_opt,
    'quiet|q' => \$quiet_opt,
    'o=s'     => \$output_opt,
-) or die $USAGE;
+) or usage;
+
 
 our $compiler = shift @ARGV;
+
+usage unless $compiler;
 
 die "Err: compiler either 'ocamlc' or 'ocamlopt'"
   unless ( $compiler =~ /ocamlc|ocamlopt/ );
